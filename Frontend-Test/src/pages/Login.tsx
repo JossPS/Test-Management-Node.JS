@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { AuthContainer } from '../components/AuthContainer';
 
 export function Login() {
   const { login } = useAuth();
@@ -22,49 +23,55 @@ export function Login() {
     }
 
     try {
-      setLoading(true);
-      await login(email, password);
-      navigate('/profile');
+        setLoading(true);
+        const loggedUser = await login(email, password);
+
+        if (loggedUser.role === 'admin') {
+        navigate('/admin');
+        } else {
+        navigate('/profile');
+        }
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Credenciales inválidas');
+        setError(err?.response?.data?.message || 'Credenciales inválidas');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
-  return (
-    <div style={{ maxWidth: 420, margin: '40px auto' }}>
-      <h2>Login</h2>
-
-      <form onSubmit={onSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label>Email</label>
+   return (
+    <AuthContainer title="Login" subtitle="Ingresa con tu email y contraseña">
+      <form className="form" onSubmit={onSubmit}>
+        <label className="label">
+          Email
           <input
-            style={{ width: '100%', padding: 8 }}
+            className="input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="juan@example.com"
           />
-        </div>
+        </label>
 
-        <div style={{ marginBottom: 12 }}>
-          <label>Contraseña</label>
+        <label className="label">
+          Password
           <input
-            style={{ width: '100%', padding: 8 }}
+            className="input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="********"
           />
-        </div>
+        </label>
 
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+        {error && <p className="error">{error}</p>}
 
-        <button disabled={loading} type="submit">
+        <button className="button" disabled={loading} type="submit">
           {loading ? 'Ingresando...' : 'Ingresar'}
         </button>
+        <p style={{ margin: 0, textAlign: 'center' }}>
+            ¿No tienes cuenta? <a href="/register">Regístrate</a>
+        </p>
       </form>
-    </div>
+    </AuthContainer>
   );
 }

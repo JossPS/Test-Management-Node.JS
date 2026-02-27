@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import type { User } from '../types/auth';
+import { PageContainer } from '../components/PageContainer';
 
 export function Profile() {
   const { user, logout, refreshMe } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
   const [editing, setEditing] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -17,20 +18,41 @@ export function Profile() {
 
   useEffect(() => {
     setName(user?.name || '');
+    setEmail(user?.email || '');
   }, [user]);
+
+  const validateEmail = (value: string) => {
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  };
 
   const onSave = async () => {
     setError(null);
     setSuccess(null);
 
-    if (!name.trim()) {
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanName) {
       setError('El nombre es obligatorio');
+      return;
+    }
+
+    if (!cleanEmail) {
+      setError('El correo es obligatorio');
+      return;
+    }
+
+    if (!validateEmail(cleanEmail)) {
+      setError('El correo no tiene un formato válido');
       return;
     }
 
     try {
       setLoading(true);
-      await api.put('/api/users/me', { name });
+
+      await api.put('/api/users/me', { name: cleanName, email: cleanEmail });
+
       await refreshMe();
       setEditing(false);
       setSuccess('Perfil actualizado');
@@ -49,42 +71,87 @@ export function Profile() {
   if (!user) return null;
 
   return (
-    <div style={{ maxWidth: 520, margin: '40px auto' }}>
-      <h2>Perfil</h2>
-
-      <p><b>Email:</b> {user.email}</p>
-      <p><b>Rol:</b> {user.role}</p>
-
-      <div style={{ marginTop: 12 }}>
-        <label><b>Nombre:</b></label>
+    <PageContainer title="Perfil">
+      <div className="form">
         {!editing ? (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span>{user.name}</span>
-            <button onClick={() => setEditing(true)}>Editar</button>
-          </div>
+          <>
+            <div className="row" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ margin: 0 }}><b>Email:</b></p>
+                <p style={{ margin: '6px 0 0' }}>{user.email}</p>
+              </div>
+
+              <button className="smallBtn" onClick={() => setEditing(true)}>
+                Editar
+              </button>
+            </div>
+
+            <div>
+              <p style={{ margin: 0 }}><b>Nombre:</b></p>
+              <p style={{ margin: '6px 0 0' }}>{user.name}</p>
+            </div>
+          </>
         ) : (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <input
-              style={{ padding: 8, flex: 1 }}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <button disabled={loading} onClick={onSave}>
-              {loading ? 'Guardando...' : 'Guardar'}
-            </button>
-            <button disabled={loading} onClick={() => { setEditing(false); setName(user.name); }}>
-              Cancelar
-            </button>
+          <div className="form">
+            <label className="label">
+              Nombre
+              <input
+                className="input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={loading}
+              />
+            </label>
+
+            <label className="label">
+              Correo
+              <input
+                className="input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                inputMode="email"
+                autoComplete="email"
+              />
+            </label>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="button" disabled={loading} onClick={onSave}>
+                {loading ? 'Guardando...' : 'Guardar'}
+              </button>
+
+              <button
+                className="smallBtn"
+                disabled={loading}
+                onClick={() => {
+                  setEditing(false);
+                  setName(user.name);
+                  setEmail(user.email);
+                  setError(null);
+                  setSuccess(null);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         )}
-      </div>
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
 
-      <div style={{ marginTop: 24 }}>
-        <button onClick={onLogout}>Logout</button>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          {user.role === 'admin' && (
+            <button className="smallBtn" onClick={() => navigate('/admin')}>
+              Ir a Admin
+            </button>
+          )}
+
+          <button className="smallBtn" onClick={onLogout}>
+            Salir
+          </button>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
