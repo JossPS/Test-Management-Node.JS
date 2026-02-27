@@ -23,3 +23,9 @@ export const loginValidation = [
     .notEmpty()
     .withMessage('La contraseña es obligatoria'),
 ];
+
+export const updateProfileValidation = [
+  body('name')
+    .notEmpty()
+    .withMessage('El nombre es obligatorio'),
+];
