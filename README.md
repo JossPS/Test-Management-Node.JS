@@ -58,14 +58,14 @@ root/
 
 ---
 
-## 🔐 Variables de Entorno
+##  Variables de Entorno
 
 Crear un archivo `.env` dentro de `backend/`:
 
 
 ---
 
-## 🗄️ Configuración de Base de Datos
+##  Configuración de Base de Datos
 
 1. Crear base de datos:
 
@@ -98,17 +98,22 @@ Desde la raíz del proyecto:
 npm install
 npm run dev
 ```
-## 
-Credenciales de Prueba
+## Credenciales de Prueba
+
 Usuario Admin
+
 Email: admin@example.com
+
 Password: 12345678
 
 Usuario Normal
+
 Email: user@example.com
+
 Password: 12345678
 
 Endpoints
+
 Registro
 
 POST /api/auth/register
@@ -128,28 +133,28 @@ PUT /api/users/me
 Listar Usuarios (admin)
 
 GET /api/users
-Seguridad Implementada
+## Seguridad Implementada
 
-Passwords hasheados con bcrypt
+- Passwords hasheados con bcrypt
 
-JWT con userId, email y role
+- JWT con userId, email y role
 
-Middleware de autenticación
+- Middleware de autenticación
 
-Middleware de autorización por rol
+- Middleware de autorización por rol
 
-Validaciones con express-validator
+- Validaciones con express-validator
 
-Prepared statements (prevención SQL injection)
+- Prepared statements (prevención SQL injection)
 
-No se exponen passwords en respuestas
-Consideraciones
+- No se exponen passwords en respuestas
+##Consideraciones
 
-TypeScript estricto
+- TypeScript estricto
 
-Separación de responsabilidades
+- Separación de responsabilidades
 
-Manejo centralizado de errores
+- Manejo centralizado de errores
 
-Variables sensibles en .env
+- Variables sensibles en .env
 ---
