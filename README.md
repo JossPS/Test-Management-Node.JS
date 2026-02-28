@@ -1,6 +1,6 @@
 # Prueba Técnica - WoowTechnology
 
-## 📌 Descripción
+##  Descripción
 
 Aplicación fullstack desarrollada con:
 
@@ -98,25 +98,17 @@ Desde la raíz del proyecto:
 npm install
 npm run dev
 ```
-
-
-
-Servidor en:
-
-🔑 Credenciales de Prueba
+## 
+Credenciales de Prueba
 Usuario Admin
-
 Email: admin@example.com
-
 Password: 12345678
 
 Usuario Normal
-
 Email: user@example.com
-
 Password: 12345678
 
-📡 Endpoints
+Endpoints
 Registro
 
 POST /api/auth/register
@@ -160,3 +152,4 @@ Separación de responsabilidades
 Manejo centralizado de errores
 
 Variables sensibles en .env
+---
